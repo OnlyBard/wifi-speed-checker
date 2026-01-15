@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Onlybard – Go Live Check</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #020617;
+      color: white;
+      text-align: center;
+      padding: 30px;
+    }
+
+    h1 {
+      color: #38bdf8;
+    }
+
+    button, select {
+      padding: 10px 18px;
+      margin: 10px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+    }
+
+    button {
+      background: #22c55e;
+      cursor: pointer;
+    }
+
+    select {
+      background: #1e293b;
+      color: white;
+    }
+
+    #results {
+      margin-top: 25px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #statusCard {
+      font-size: 22px;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+
+    .safe { background: #16a34a; }
+    .risky { background: #ca8a04; }
+    .bad { background: #dc2626; }
+
+    pre {
+      background: #020617;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: left;
+      max-width: 500px;
+      margin: auto;
+    }
+
+    footer {
+      margin-top: 40px;
+      opacity: 0.7;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>🎮 Onlybard Go Live Check</h1>
+  <p>
+    Streamer Internet Test for OBS & Streamlabs<br>
+    <small>by <strong>@Onlybard</strong></small>
+  </p>
+
+  <select id="platform">
+    <option value="twitch">Twitch</option>
+    <option value="youtube">YouTube</option>
+  </select>
+
+  <br>
+  <button onclick="startTest()">Run Test</button>
+
+  <div id="results" class="hidden">
+
+    <div id="statusCard"></div>
+
+    <p>📡 Avg Ping: <span id="ping"></span> ms</p>
+    <p>📉 Jitter: <span id="jitter"></span> ms</p>
+    <p>⬆ Upload: <span id="upload"></span> Mbps</p>
+
+    <h2>🎥 OBS Recommendation</h2>
+    <pre id="obs"></pre>
+    <button onclick="copyText('obs')">Copy OBS Settings</button>
+
+    <h2>🎬 Streamlabs Recommendation</h2>
+    <pre id="streamlabs"></pre>
+    <button onclick="copyText('streamlabs')">Copy Streamlabs Settings</button>
+
+  </div>
+
+  <footer>
+    Made for streamers • Built by Onlybard
+  </footer>
+
+<script>
+  async function pingTest() {
+    const times = [];
+    for (let i = 0; i < 8; i++) {
+      const start = performance.now();
+      await fetch("https://www.google.com/favicon.ico", { mode: "no-cors" });
+      times.push(performance.now() - start);
+    }
+    const avg = times.reduce((a, b) => a + b) / times.length;
+    const jitter = Math.max(...times) - Math.min(...times);
+    return { avg: Math.round(avg), jitter: Math.round(jitter) };
+  }
+
+  async function uploadTest() {
+    const data = new Uint8Array(2 * 1024 * 1024);
+    const start = performance.now();
+    await fetch("https://httpbin.org/post", {
+      method: "POST",
+      body: data
+    });
+    return ((data.length * 8) / ((performance.now() - start) / 1000) / 1e6).toFixed(2);
+  }
+
+  function getPreset(upload, platform) {
+    const max = platform === "twitch" ? 6 : 9;
+
+    if (upload >= max * 1.4) return `1080p60 @ ${max}000 kbps`;
+    if (upload >= 4.5 * 1.4) return "720p60 @ 4500 kbps";
+    if (upload >= 3 * 1.4) return "720p30 @ 3000 kbps";
+    return null;
+  }
+
+  function getStatus(upload, jitter) {
+    if (upload >= 6 && jitter < 20)
+      return { text: "🟢 SAFE TO GO LIVE", cls: "safe" };
+    if (upload >= 4)
+      return { text: "🟡 RISKY – LOWER BITRATE", cls: "risky" };
+    return { text: "🔴 DO NOT GO LIVE", cls: "bad" };
+  }
+
+  function obsSettings(preset) {
+    if (!preset) return "Not recommended to stream";
+
+    return `Encoder: x264
+Rate Control: CBR
+Preset: Veryfast
+Keyframe Interval: 2
+Output: ${preset}`;
+  }
+
+  function streamlabsSettings(preset) {
+    if (!preset) return "Not recommended to stream";
+
+    return `Video Output: ${preset}
+Encoder: Hardware (if available)
+Auto Bitrate: ON`;
+  }
+
+  function copyText(id) {
+    navigator.clipboard.writeText(document.getElementById(id).innerText);
+    alert("Copied!");
+  }
+
+  function saveLast(data) {
+    localStorage.setItem("onlybard_last_test", JSON.stringify(data));
+  }
+
+  function loadLast() {
+    const data = localStorage.getItem("onlybard_last_test");
+    return data ? JSON.parse(data) : null;
+  }
+
+  async function startTest() {
+    document.getElementById("results").classList.remove("hidden");
+
+    const platform = document.getElementById("platform").value;
+    const ping = await pingTest();
+    const upload = await uploadTest();
+    const preset = getPreset(upload, platform);
+    const status = getStatus(upload, ping.jitter);
+
+    const card = document.getElementById("statusCard");
+    card.innerText = status.text;
+    card.className = status.cls;
+
+    document.getElementById("ping").innerText = ping.avg;
+    document.getElementById("jitter").innerText = ping.jitter;
+    document.getElementById("upload").innerText = upload;
+
+    document.getElementById("obs").innerText = obsSettings(preset);
+    document.getElementById("streamlabs").innerText = streamlabsSettings(preset);
+
+    saveLast({
+      platform,
+      upload,
+      ping: ping.avg,
+      jitter: ping.jitter,
+      status: status.text
+    });
+  }
+
+  window.onload = () => {
+    const last = loadLast();
+    if (!last) return;
+
+    document.getElementById("results").classList.remove("hidden");
+    document.getElementById("platform").value = last.platform;
+    document.getElementById("ping").innerText = last.ping;
+    document.getElementById("jitter").innerText = last.jitter;
+    document.getElementById("upload").innerText = last.upload;
+
+    const card = document.getElementById("statusCard");
+    card.innerText = "Last Test: " + last.status;
+    card.className = last.status.includes("SAFE")
+      ? "safe"
+      : last.status.includes("RISKY")
+      ? "risky"
+      : "bad";
+  };
+</script>
+
+</body>
+</html>
