@@ -1,22 +1,26 @@
 :root {
-  --bg: #0b1220;
+  --bg: #0f172a;
+  --surface: #111827;
   --card: #111827;
   --border: #1f2937;
-  --text: #e5e7eb;
-  --muted: #9ca3af;
-  --accent: #2563eb;
 
-  --green: #16a34a;
-  --yellow: #d97706;
-  --red: #dc2626;
+  --text: #e5e7eb;
+  --muted: #94a3b8;
+  --accent: #3b82f6;
+
+  --green: #22c55e;
+  --yellow: #f59e0b;
+  --red: #ef4444;
 }
 
 .light {
-  --bg: #f9fafb;
+  --bg: #f8fafc;
+  --surface: #ffffff;
   --card: #ffffff;
   --border: #e5e7eb;
-  --text: #111827;
-  --muted: #6b7280;
+
+  --text: #020617;
+  --muted: #64748b;
 }
 
 * {
@@ -27,13 +31,14 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: Inter, system-ui, sans-serif;
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.5;
 }
 
 .container {
-  max-width: 960px;
+  max-width: 980px;
   margin: auto;
-  padding: 32px;
+  padding: 40px 32px;
 }
 
 /* Top bar */
@@ -41,7 +46,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 28px;
+  margin-bottom: 36px;
 }
 
 .user {
@@ -50,91 +55,110 @@ body {
 }
 
 .top-actions button {
-  margin-left: 8px;
-  background: none;
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 6px 12px;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 13px;
+  padding: 6px 10px;
   border-radius: 8px;
   cursor: pointer;
 }
 
+.top-actions button:hover {
+  background: var(--border);
+  color: var(--text);
+}
+
 /* Header */
 header {
-  margin-bottom: 32px;
+  margin-bottom: 40px;
 }
 
 h1 {
-  font-size: 32px;
+  font-size: 34px;
   font-weight: 600;
-  margin-bottom: 6px;
+  margin: 0 0 8px 0;
 }
 
 .subtitle {
+  font-size: 15px;
   color: var(--muted);
 }
 
 /* Controls */
 .controls {
   display: flex;
-  gap: 12px;
-  margin-bottom: 30px;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 36px;
 }
 
-select, .run {
-  padding: 12px 16px;
-  font-size: 14px;
-  border-radius: 10px;
+select {
+  background: var(--surface);
   border: 1px solid var(--border);
-  background: var(--card);
   color: var(--text);
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 14px;
 }
 
 .run {
   background: var(--accent);
-  color: white;
+  color: #ffffff;
+  padding: 12px 22px;
+  font-size: 14px;
+  border-radius: 10px;
   border: none;
   cursor: pointer;
+}
+
+.run:hover {
+  opacity: 0.95;
 }
 
 /* Cards */
 .card {
   background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 20px;
+  border-radius: 16px;
+  padding: 22px;
 }
 
+/* Status card */
 #statusCard {
-  font-size: 22px;
+  font-size: 20px;
+  font-weight: 500;
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
-.safe { border-left: 6px solid var(--green); }
-.risky { border-left: 6px solid var(--yellow); }
-.bad { border-left: 6px solid var(--red); }
+.safe { color: var(--green); }
+.risky { color: var(--yellow); }
+.bad { color: var(--red); }
 
+/* Metrics */
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
+  gap: 22px;
 }
 
 .metric-label {
   font-size: 13px;
   color: var(--muted);
+  margin-bottom: 6px;
 }
 
 .metric-value {
-  font-size: 24px;
-  margin: 10px 0;
+  font-size: 26px;
+  font-weight: 500;
+  margin-bottom: 12px;
 }
 
+/* Meter */
 .meter {
   height: 6px;
   background: var(--border);
-  border-radius: 6px;
+  border-radius: 999px;
   overflow: hidden;
 }
 
@@ -142,11 +166,12 @@ select, .run {
   height: 100%;
   width: 0%;
   background: var(--accent);
-  transition: width 0.4s ease;
+  transition: width 0.45s ease;
 }
 
+/* Footer */
 footer {
-  margin-top: 40px;
+  margin-top: 48px;
   text-align: center;
   font-size: 13px;
   color: var(--muted);
@@ -155,4 +180,3 @@ footer {
 .hidden {
   display: none;
 }
-
