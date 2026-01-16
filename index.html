@@ -1,315 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Go Live Check</title>
-
-<style>
-:root {
-  --bg: #0b1220;
-  --card: #111827;
-  --border: #1f2937;
-  --text: #e5e7eb;
-  --muted: #9ca3af;
-  --accent: #2563eb;
-
-  --green: #16a34a;
-  --yellow: #d97706;
-  --red: #dc2626;
-}
-
-.light {
-  --bg: #f9fafb;
-  --card: #ffffff;
-  --border: #e5e7eb;
-  --text: #111827;
-  --muted: #6b7280;
-  --accent: #2563eb;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--text);
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-}
-
-.container {
-  max-width: 960px;
-  margin: auto;
-  padding: 32px;
-}
-
-/* Top bar */
-.top-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 28px;
-}
-
-.user {
-  font-size: 14px;
-  color: var(--muted);
-}
-
-.top-actions {
-  display: flex;
-  gap: 10px;
-}
-
-.top-actions button {
-  background: none;
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 6px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 13px;
-}
-
-/* Header */
-header {
-  margin-bottom: 32px;
-}
-
-h1 {
-  font-size: 32px;
-  font-weight: 600;
-  margin: 0 0 6px 0;
-}
-
-.subtitle {
-  color: var(--muted);
-  font-size: 15px;
-}
-
-/* Controls */
-.controls {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 30px;
-}
-
-select, .run {
-  padding: 12px 16px;
-  font-size: 14px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: var(--card);
-  color: var(--text);
-}
-
-.run {
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  cursor: pointer;
-}
-
-/* Cards */
-.card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 20px;
-}
-
-#statusCard {
-  text-align: center;
-  font-size: 22px;
-  font-weight: 500;
-  margin-bottom: 24px;
-}
-
-.safe { border-left: 6px solid var(--green); }
-.risky { border-left: 6px solid var(--yellow); }
-.bad { border-left: 6px solid var(--red); }
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-}
-
-.metric-label {
-  font-size: 13px;
-  color: var(--muted);
-  margin-bottom: 6px;
-}
-
-.metric-value {
-  font-size: 24px;
-  font-weight: 500;
-  margin-bottom: 10px;
-}
-
-.meter {
-  height: 6px;
-  background: var(--border);
-  border-radius: 6px;
-  overflow: hidden;
-}
-
-.fill {
-  height: 100%;
-  width: 0%;
-  background: var(--accent);
-  transition: width 0.5s ease;
-}
-
-footer {
-  margin-top: 40px;
-  text-align: center;
-  font-size: 13px;
-  color: var(--muted);
-}
-
-.hidden { display: none; }
-</style>
+  <meta charset="UTF-8">
+  <title>Go Live Check</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 <div class="container">
 
-<div class="top-bar">
-  <div class="user" id="userText">Not signed in</div>
-  <div class="top-actions">
-    <button onclick="toggleTheme()">Theme</button>
-    <button onclick="signin()">Sign in</button>
-  </div>
-</div>
-
-<header>
-  <h1>Go Live Check</h1>
-  <div class="subtitle">
-    Professional pre-stream internet readiness test
-  </div>
-</header>
-
-<div class="controls">
-  <select id="platform">
-    <option value="twitch">Twitch</option>
-    <option value="youtube">YouTube</option>
-  </select>
-  <button class="run" onclick="startTest()">Run Test</button>
-</div>
-
-<div id="results" class="hidden">
-
-  <div id="statusCard" class="card"></div>
-
-  <div class="grid">
-    <div class="card">
-      <div class="metric-label">Upload Speed</div>
-      <div class="metric-value"><span id="upload">0</span> Mbps</div>
-      <div class="meter"><div id="uploadBar" class="fill"></div></div>
-    </div>
-
-    <div class="card">
-      <div class="metric-label">Ping</div>
-      <div class="metric-value"><span id="ping">0</span> ms</div>
-      <div class="meter"><div id="pingBar" class="fill"></div></div>
-    </div>
-
-    <div class="card">
-      <div class="metric-label">Jitter</div>
-      <div class="metric-value"><span id="jitter">0</span> ms</div>
-      <div class="meter"><div id="jitterBar" class="fill"></div></div>
+  <div class="top-bar">
+    <div class="user" id="userText">Not signed in</div>
+    <div class="top-actions">
+      <button onclick="toggleTheme()">Theme</button>
+      <button onclick="signin()">Sign in</button>
     </div>
   </div>
 
+  <header>
+    <h1>Go Live Check</h1>
+    <p class="subtitle">Professional pre-stream internet readiness test</p>
+  </header>
+
+  <div class="controls">
+    <select id="platform">
+      <option value="twitch">Twitch</option>
+      <option value="youtube">YouTube</option>
+    </select>
+    <button class="run" onclick="startTest()">Run Test</button>
+  </div>
+
+  <section id="results" class="hidden">
+    <div id="statusCard" class="card"></div>
+
+    <div class="grid">
+      <div class="card">
+        <span class="metric-label">Upload Speed</span>
+        <div class="metric-value"><span id="upload">0</span> Mbps</div>
+        <div class="meter"><div id="uploadBar" class="fill"></div></div>
+      </div>
+
+      <div class="card">
+        <span class="metric-label">Ping</span>
+        <div class="metric-value"><span id="ping">0</span> ms</div>
+        <div class="meter"><div id="pingBar" class="fill"></div></div>
+      </div>
+
+      <div class="card">
+        <span class="metric-label">Jitter</span>
+        <div class="metric-value"><span id="jitter">0</span> ms</div>
+        <div class="meter"><div id="jitterBar" class="fill"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    No login required • Client-side only • Safe to share
+  </footer>
+
 </div>
 
-<footer>
-  No login required • Client-side only • Safe to share
-</footer>
-
-</div>
-
-<script>
-function signin() {
-  const name = prompt("Display name (optional)");
-  if (!name) return;
-  localStorage.setItem("glc_user", name);
-  updateUser();
-}
-
-function updateUser() {
-  const u = localStorage.getItem("glc_user");
-  document.getElementById("userText").innerText =
-    u ? "Signed in as " + u : "Not signed in";
-}
-
-function toggleTheme() {
-  document.body.classList.toggle("light");
-  localStorage.setItem("glc_theme",
-    document.body.classList.contains("light") ? "light" : "dark");
-}
-
-async function pingTest() {
-  const t = [];
-  for (let i = 0; i < 6; i++) {
-    const s = performance.now();
-    await fetch("https://www.google.com/favicon.ico", { mode: "no-cors" });
-    t.push(performance.now() - s);
-  }
-  return {
-    avg: Math.round(t.reduce((a,b)=>a+b)/t.length),
-    jitter: Math.round(Math.max(...t)-Math.min(...t))
-  };
-}
-
-async function uploadTest() {
-  const data = new Uint8Array(2 * 1024 * 1024);
-  const s = performance.now();
-  await fetch("https://httpbin.org/post",{method:"POST",body:data});
-  return ((data.length*8)/((performance.now()-s)/1000)/1e6).toFixed(2);
-}
-
-function setBar(id, value, max) {
-  document.getElementById(id).style.width =
-    Math.min((value / max) * 100, 100) + "%";
-}
-
-function getStatus(upload, jitter) {
-  if (upload >= 6 && jitter < 20)
-    return ["SAFE TO GO LIVE", "safe"];
-  if (upload >= 4)
-    return ["RISKY – LOWER QUALITY", "risky"];
-  return ["DO NOT GO LIVE", "bad"];
-}
-
-async function startTest() {
-  document.getElementById("results").classList.remove("hidden");
-
-  const ping = await pingTest();
-  const upload = await uploadTest();
-  const status = getStatus(upload, ping.jitter);
-
-  const card = document.getElementById("statusCard");
-  card.innerText = status[0];
-  card.className = "card " + status[1];
-
-  document.getElementById("upload").innerText = upload;
-  document.getElementById("ping").innerText = ping.avg;
-  document.getElementById("jitter").innerText = ping.jitter;
-
-  setBar("uploadBar", upload, 10);
-  setBar("pingBar", ping.avg, 200);
-  setBar("jitterBar", ping.jitter, 100);
-}
-
-window.onload = () => {
-  updateUser();
-  if (localStorage.getItem("glc_theme") === "light")
-    document.body.classList.add("light");
-};
-</script>
-
+<script src="js/app.js"></script>
 </body>
 </html>
